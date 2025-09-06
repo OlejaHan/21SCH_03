@@ -3,14 +3,19 @@
 
 #include <stdio.h>
 
-enum { FIELD_X = 80, FIELD_Y = 25 };
+/*  длина поля по Х
+    длина поля по У
+    длина палки игрока
+
+*/
+enum { FIELD_X = 80, FIELD_Y = 25, PLAYER_LENGHT = 4 };
 
 static void clear_screen(void) {
     /* Очистка экрана и позиционирование курсора (ANSI) */
     printf("\033[H\033[J");
 }
 
-static void draw_field(void) {
+static void draw_field(int position_1, int position_2) {
     clear_screen();
 
 
@@ -26,19 +31,32 @@ static void draw_field(void) {
             // если мы в позиции верхней или нижней границы
             if (y == 0 || y == (FIELD_Y - 1)) {
                 /* верх/низ рамки/угол рамки */
-                ch = (x == 0 ||  x == (FIELD_X - 1)) ? (int) 35 : '=';
+                ch = (x == 0 ||  x == (FIELD_X - 1)) ? '.' : '=';
             } else if (x == 0 || x == (FIELD_X - 1)) {
                 /* боковые стенки */
-                ch = (int) 35;
+                ch = '|';
             } else {
                 // находимся внутри поля
-                if (x == 39)
-                {
-                    /* середина поля */
-                    ch = (int) 58;
+
+                // рисуем середину поля
+                //ch = x == ((FIELD_X-2)/2) ? ':';
+                if (x == ((FIELD_X-2)/2)){
+                    ch = ':';
                 }
                 
-                //ch = (int) 60;
+                
+                // отрисовываем положение игрока 1
+                if (x == 2 && (y >= position_1 && y <= (position_1 + PLAYER_LENGHT))){
+                    ch = '!';
+                }
+
+
+                // отрисовываем положение игрока 1
+                if (x == 2 && (y >= position_2 && y <= (position_2 + PLAYER_LENGHT))){
+                    ch = '!';
+                }
+
+
             }
             putchar(ch);
             x = x + 1;
@@ -49,6 +67,10 @@ static void draw_field(void) {
 }
 
 int main(void) {
-    draw_field();
+
+    // начальные позиции игроков
+    int player_1_pos_y = 2, player_2_pos_y = 10;
+
+    draw_field(player_1_pos_y, player_2_pos_y);
     return 0;
 }
